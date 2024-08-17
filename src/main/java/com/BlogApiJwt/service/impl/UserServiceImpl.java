@@ -7,6 +7,8 @@ import com.BlogApiJwt.entity.User;
 import com.BlogApiJwt.exception.CustomException;
 import com.BlogApiJwt.repository.UserRepository;
 import com.BlogApiJwt.service.UserService;
+import com.BlogApiJwt.validation.ResetPasswordValidation;
+import com.BlogApiJwt.validation.UpdateUserValidation;
 import com.BlogApiJwt.validation.UserLoginValidation;
 import com.BlogApiJwt.validation.UserValidation;
 import jakarta.mail.AuthenticationFailedException;
@@ -21,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -95,13 +98,45 @@ public class UserServiceImpl implements UserService {
         Authentication authenticate =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginValidation.getEmail(), userLoginValidation.getPassword()));
        ///// SecurityContextHolder.getContext().setAuthentication(authenticate);
 
-//        if (!authenticate.isAuthenticated()) {
-//           throw new CustomException("Wrong email or password");
-//        }
-
         return userRepository.findByEmail(userLoginValidation.getEmail()).orElseThrow();
 
       ///// return userDao.findUserByEmail(userLoginValidation.getEmail());
+    }
+
+    @Override
+    public void update(UpdateUserValidation updateUserValidation) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        User userData = userDao.findById(currentUser.getId());
+
+        if(userData == null){
+            throw new CustomException("User not found");
+        }
+
+        userData.setFullName(updateUserValidation.getFullName());
+        userData.setEmail(updateUserValidation.getEmail());
+        userDao.update(userData);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordValidation resetPasswordValidation) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        User userData = userDao.findById(currentUser.getId());
+
+        if(userData == null){
+            throw new CustomException("User not found");
+        }
+
+        if(!passwordEncoder.matches(resetPasswordValidation.getOldPassword(), userData.getPassword())){
+            throw new CustomException("Incorrect password");
+        }
+
+        userData.setPassword(passwordEncoder.encode(resetPasswordValidation.getNewPassword()));
+        userDao.update(userData);
     }
 
 

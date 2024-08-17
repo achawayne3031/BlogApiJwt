@@ -2,6 +2,7 @@ package com.BlogApiJwt.config;
 
 
 import com.BlogApiJwt.exception.CustomException;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -9,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.mail.MailSendException;
 import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -151,5 +154,30 @@ public class ApiExceptionHandler {
             NoHandlerFoundException ex, HttpServletRequest httpServletRequest) {
         return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler({UsernameNotFoundException.class})
+    public ResponseEntity<ApiResponse> handleUsernameNotFoundException(
+            UsernameNotFoundException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({MailSendException.class})
+    public ResponseEntity<ApiResponse> handleMailSendException(
+            MailSendException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+
+    @ExceptionHandler({MessagingException.class})
+    public ResponseEntity<ApiResponse> handleMessagingException(
+            MessagingException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+
+
+
 
 }

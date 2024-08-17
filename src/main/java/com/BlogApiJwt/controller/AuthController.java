@@ -3,8 +3,10 @@ package com.BlogApiJwt.controller;
 
 import com.BlogApiJwt.config.ApiResponse;
 import com.BlogApiJwt.entity.User;
+import com.BlogApiJwt.service.EmailService;
 import com.BlogApiJwt.service.JwtService;
 import com.BlogApiJwt.service.UserService;
+import com.BlogApiJwt.validation.ForgotPasswordValidator;
 import com.BlogApiJwt.validation.UserLoginValidation;
 import com.BlogApiJwt.validation.UserValidation;
 import jakarta.validation.Valid;
@@ -20,14 +22,18 @@ public class AuthController {
 
     private UserService userService;
     private JwtService jwtService;
+    private EmailService emailService;
 
-    public AuthController(UserService userService, JwtService jwtService) {
+
+    public AuthController(UserService userService, JwtService jwtService, EmailService emailService) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.emailService = emailService;
+
     }
 
 
-    @PostMapping("/api/auth/register")
+    @PostMapping("/auth/register")
     public ResponseEntity registerUser(@RequestBody @Valid UserValidation userValidation){
 
         User user = userService.findByEmail(userValidation.getEmail());
@@ -41,7 +47,7 @@ public class AuthController {
 
 
 
-    @PostMapping("/api/auth/login")
+    @PostMapping("/auth/login")
     public ResponseEntity loginUser(@RequestBody @Valid UserLoginValidation userLoginValidation){
 
         User user = userService.findByEmail(userLoginValidation.getEmail());
@@ -57,7 +63,22 @@ public class AuthController {
     }
 
 
-    @GetMapping("/api/access-denied")
+    @PostMapping("/auth/forgot-password")
+    public ResponseEntity forgotPassword(@RequestBody @Valid ForgotPasswordValidator forgotPasswordValidator){
+
+        emailService.setTo(forgotPasswordValidator.getEmail());
+        emailService.setBody("This is a test email with java spring boot");
+        emailService.setSubject("New Java SpringBoot");
+        emailService.setType("text");
+
+        /// send mail ///
+        emailService.sendMail();
+
+        return new ResponseEntity(new ApiResponse<Object>("Forgot password link has been sent to your email", true), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/access-denied")
     public ResponseEntity accessDenied(){
         return new ResponseEntity(new ApiResponse<Object>("Access denied", false), HttpStatus.FORBIDDEN);
     }

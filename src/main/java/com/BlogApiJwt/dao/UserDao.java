@@ -9,4 +9,9 @@ public interface UserDao {
     User findUserByFullName(String fullName);
 
     void save(User user);
+
+    void update(User user);
+
+    User findById(int id);
+
 }
