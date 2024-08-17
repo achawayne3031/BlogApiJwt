@@ -1,22 +1,30 @@
 package com.BlogApiJwt.service;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.util.Optional;
-
 
 @Service
 @Getter
 @Setter
 public class EmailService {
-
 
     @Autowired
     private JavaMailSender mailSender;
@@ -34,21 +42,41 @@ public class EmailService {
 
     private String type;
 
+    private Context context;
 
-    public EmailService() {
+    private String htmlTemplate;
 
+    private final TemplateEngine templateEngine;
+
+    public EmailService(TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
     }
 
-
-    public void sendMail(){
-        switch(type){
+    public void sendMail() {
+        switch (type) {
 
             case "text":
                 mailWithText();
                 break;
 
-            case "attachment":
-                mailWithAttachment();
+            case "html":
+                try {
+                    mailWithHtml();
+                } catch (MessagingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                break;
+
+            case "htmlWithAttachment":
+
+                try {
+                    mailWithHtmAndAttachment();
+                } catch (MessagingException | IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
                 break;
 
             case "no attachment":
@@ -61,8 +89,7 @@ public class EmailService {
         }
     }
 
-
-    private void mailWithText(){
+    private void mailWithText() {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setFrom(senderEmail);
@@ -70,19 +97,45 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(body);
 
-        System.out.println(message.toString());
-
         mailSender.send(message);
     }
 
+    private void mailWithHtml() throws MessagingException {
 
-    private void mailWithAttachment(){
+        MimeMessage message = mailSender.createMimeMessage();
+
+        // Process the template with the given context
+        String htmlContent = templateEngine.process(htmlTemplate, context);
+
+        message.setFrom(new InternetAddress(senderEmail));
+        message.setRecipients(MimeMessage.RecipientType.TO, to);
+        message.setSubject(subject);
+        message.setContent(htmlContent, "text/html; charset=utf-8");
+
+        mailSender.send(message);
 
     }
 
+    private void mailWithHtmAndAttachment() throws MessagingException, IOException {
 
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-    private void mailWithoutAttachement(){
+        // Process the template with the given context
+        String htmlContent = templateEngine.process(htmlTemplate, context);
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlContent, true);
+
+        ClassPathResource classPathResource = new ClassPathResource("blog.sql");
+        helper.addAttachment(classPathResource.getFilename(), classPathResource);
+
+        mailSender.send(message);
+
+    }
+
+    private void mailWithoutAttachement() {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(to);
@@ -91,6 +144,5 @@ public class EmailService {
 
         mailSender.send(message);
     }
-
 
 }
