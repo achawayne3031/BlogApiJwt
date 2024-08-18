@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartException;
@@ -200,6 +201,25 @@ public class ApiExceptionHandler {
             HttpMediaTypeNotSupportedException ex, HttpServletRequest httpServletRequest) {
         return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
     }
+
+
+
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    public ResponseEntity<ApiResponse> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler({IllegalStateException.class})
+    public ResponseEntity<ApiResponse> handleIllegalStateException(
+            IllegalStateException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+
+
 
 
 

@@ -2,8 +2,10 @@ package com.BlogApiJwt.controller;
 
 
 import com.BlogApiJwt.config.ApiResponse;
+import com.BlogApiJwt.entity.Blog;
 import com.BlogApiJwt.service.BlogService;
 import com.BlogApiJwt.validation.AddBlogValidation;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,19 @@ public class BlogController {
         this.blogService = blogService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity allBlog(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ){
 
-    @RequestMapping(value = "/add" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
+        Page<Blog> blogs = blogService.paginatedBlog(page, size);
+
+        return new ResponseEntity<>(new ApiResponse<Object>("All Blog fetched successfully", true, blogs), HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
     public ResponseEntity addBlog(
             @RequestPart(value = "image", required = true) MultipartFile file,
             @RequestPart(value = "title", required = true) String title,

@@ -5,9 +5,13 @@ import com.BlogApiJwt.dao.UserDao;
 import com.BlogApiJwt.entity.Blog;
 import com.BlogApiJwt.entity.User;
 import com.BlogApiJwt.exception.CustomException;
+import com.BlogApiJwt.repository.BlogRepository;
 import com.BlogApiJwt.security.SecurityConfig;
 import com.BlogApiJwt.service.BlogService;
 import com.BlogApiJwt.validation.AddBlogValidation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +25,12 @@ public class BlogServiceImpl implements BlogService {
 
     private final BlogDao blogDao;
     private final UserDao userDao;
+    private final BlogRepository blogRepository;
 
-    public BlogServiceImpl(BlogDao blogDao, UserDao userDao) {
+    public BlogServiceImpl(BlogDao blogDao, UserDao userDao, BlogRepository blogRepository) {
         this.blogDao = blogDao;
         this.userDao = userDao;
+        this.blogRepository = blogRepository;
     }
 
     @Override
@@ -77,5 +83,16 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void deleteById(int id) {
         blogDao.deleteById(id);
+    }
+
+    @Override
+    public Page<Blog> paginatedBlog(int page, int size) {
+
+
+
+        Pageable pager = PageRequest.of(page, size);
+
+        return blogRepository.findAll(pager);
+
     }
 }
