@@ -4,10 +4,12 @@ import com.BlogApiJwt.dao.BlogDao;
 import com.BlogApiJwt.entity.Blog;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
 public class BlogDaoImpl implements BlogDao {
 
     private EntityManager entityManager;

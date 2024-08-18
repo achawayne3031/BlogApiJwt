@@ -25,8 +25,12 @@ public class Blog {
     private String content;
 
 
-    @Column(name = "image", columnDefinition = "LONGTEXT")
-    private String image;
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
+    @Column(name = "image_type")
+    private String imageType;
 
     @Column(name = "enabled")
     private boolean enabled;
@@ -75,12 +79,20 @@ public class Blog {
         this.content = content;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
     }
 
     public boolean isEnabled() {

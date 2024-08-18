@@ -34,6 +34,14 @@ public class SecurityConfig {
     }
 
 
+    public static String getAuthenticatedUserEmail(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ((org.springframework.security.core.userdetails.UserDetails)principal).getUsername();
+    }
+
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())

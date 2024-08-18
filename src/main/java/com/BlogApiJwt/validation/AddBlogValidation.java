@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -21,11 +22,6 @@ public class AddBlogValidation {
     @NotNull(message = "content is NULL")
     @NotEmpty(message = "content not be empty")
     private String content;
-
-
-    @NotNull(message = "image is NULL")
-    @NotEmpty(message = "image not be empty")
-    private String image;
 
 
 

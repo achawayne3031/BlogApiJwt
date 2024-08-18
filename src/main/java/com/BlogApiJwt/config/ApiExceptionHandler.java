@@ -14,10 +14,13 @@ import org.springframework.mail.MailSendException;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -174,6 +177,32 @@ public class ApiExceptionHandler {
             MessagingException ex, HttpServletRequest httpServletRequest) {
         return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
     }
+
+
+    @ExceptionHandler({MultipartException.class})
+    public ResponseEntity<ApiResponse> handleMultipartException(
+            MultipartException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+
+    @ExceptionHandler({MissingServletRequestPartException.class})
+    public ResponseEntity<ApiResponse> handleMissingServletRequestPartException(
+            MissingServletRequestPartException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+
+    @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
+    public ResponseEntity<ApiResponse> handleHttpMediaTypeNotSupportedException(
+            HttpMediaTypeNotSupportedException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
+
+
 
 
 
