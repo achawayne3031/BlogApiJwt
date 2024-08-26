@@ -18,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.context.Context;
 
+import java.util.stream.Collectors;
+
 @RestController()
 public class AuthController {
 
@@ -54,6 +56,9 @@ public class AuthController {
         }
 
         User authenticatedUser = userService.loginUser(userLoginValidation);
+
+
+
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 

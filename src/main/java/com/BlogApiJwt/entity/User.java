@@ -9,12 +9,14 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 @Getter
@@ -57,9 +59,15 @@ public class User implements UserDetails {
     private Collection<Role> roles;
 
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        Collection<Role> role = getRoles();
+        Optional<Role> name = role.stream().findFirst();
+
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(name.get().getName());
+        return List.of(authority);
     }
 
 
