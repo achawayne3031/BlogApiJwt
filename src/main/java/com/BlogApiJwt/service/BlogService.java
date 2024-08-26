@@ -2,6 +2,8 @@ package com.BlogApiJwt.service;
 
 import com.BlogApiJwt.entity.Blog;
 import com.BlogApiJwt.validation.AddBlogValidation;
+import com.BlogApiJwt.validation.UpdateBlogValidation;
+import com.BlogApiJwt.validation.UpdateUserValidation;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,5 +21,10 @@ public interface BlogService {
 
     void deleteById(int id);
 
-    Page<Blog> paginatedBlog(int page, int size );
+    Page<Blog> paginatedBlog(int page, int size);
+
+    boolean existByTitle(String title);
+
+    void update(UpdateBlogValidation updateBlogValidation, MultipartFile file);
+
 }

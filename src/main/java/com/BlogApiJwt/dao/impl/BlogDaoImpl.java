@@ -73,4 +73,23 @@ public class BlogDaoImpl implements BlogDao {
         }
         return blogs;
     }
+
+    @Override
+    public boolean existByTitle(String title) {
+        TypedQuery<Blog> query = entityManager.createQuery("from Blog where title = :title", Blog.class);
+        query.setParameter("title", title);
+        Blog blog = null;
+        try{
+            blog = query.getSingleResult();
+        }catch (Exception e){
+            blog = null;
+        }
+        return (blog == null) ? false : true;
+    }
+
+    @Override
+    @Transactional
+    public void update(Blog blog) {
+        entityManager.merge(blog);
+    }
 }

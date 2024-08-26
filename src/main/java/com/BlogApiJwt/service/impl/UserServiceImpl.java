@@ -12,6 +12,9 @@ import com.BlogApiJwt.validation.UpdateUserValidation;
 import com.BlogApiJwt.validation.UserLoginValidation;
 import com.BlogApiJwt.validation.UserValidation;
 import jakarta.mail.AuthenticationFailedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -137,6 +140,13 @@ public class UserServiceImpl implements UserService {
 
         userData.setPassword(passwordEncoder.encode(resetPasswordValidation.getNewPassword()));
         userDao.update(userData);
+    }
+
+    @Override
+    public Page<User> paginatedUsers(int page, int size) {
+        Pageable pager = PageRequest.of(page, size);
+
+        return userRepository.findAll(pager);
     }
 
 

@@ -15,4 +15,8 @@ public interface BlogDao {
     void deleteById(int id);
 
     List<Blog> allBlog();
+
+    boolean existByTitle(String title);
+
+    void update(Blog blog);
 }

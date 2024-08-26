@@ -4,6 +4,7 @@ package com.BlogApiJwt.config;
 import com.BlogApiJwt.exception.CustomException;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.UnexpectedTypeException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -216,6 +217,14 @@ public class ApiExceptionHandler {
             IllegalStateException ex, HttpServletRequest httpServletRequest) {
         return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
     }
+
+
+    @ExceptionHandler({UnexpectedTypeException.class})
+    public ResponseEntity<ApiResponse> handleUnexpectedTypeException(
+            UnexpectedTypeException ex, HttpServletRequest httpServletRequest) {
+        return new ResponseEntity<>(new ApiResponse<>((ex.getMessage()),false), HttpStatus.UNAUTHORIZED);
+    }
+
 
 
 

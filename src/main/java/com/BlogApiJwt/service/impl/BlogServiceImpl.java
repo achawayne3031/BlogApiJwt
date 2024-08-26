@@ -9,6 +9,7 @@ import com.BlogApiJwt.repository.BlogRepository;
 import com.BlogApiJwt.security.SecurityConfig;
 import com.BlogApiJwt.service.BlogService;
 import com.BlogApiJwt.validation.AddBlogValidation;
+import com.BlogApiJwt.validation.UpdateBlogValidation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -87,12 +88,34 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<Blog> paginatedBlog(int page, int size) {
-
-
-
         Pageable pager = PageRequest.of(page, size);
 
         return blogRepository.findAll(pager);
+    }
 
+    @Override
+    public boolean existByTitle(String title) {
+        return blogDao.existByTitle(title);
+    }
+
+    @Override
+    public void update(UpdateBlogValidation updateBlogValidation, MultipartFile file) {
+
+        Blog blog = blogDao.findById(updateBlogValidation.getId());
+        blog.setTitle(updateBlogValidation.getTitle() != null ? updateBlogValidation.getTitle() : blog.getTitle());
+        blog.setContent(updateBlogValidation.getContent() != null ? updateBlogValidation.getContent() : blog.getContent());
+
+        if(!file.isEmpty()){
+            /// Handle file Uploaded /////
+            try{
+                /// convert to String of bytes /////
+                String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+                blog.setImageType(file.getContentType());
+                blog.setImage(file.getBytes());
+            }catch (IOException e){
+                throw new CustomException(e.getMessage());
+            }
+        }
+        blogDao.update(blog);
     }
 }
