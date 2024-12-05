@@ -34,6 +34,11 @@ public class AuthController {
 
     }
 
+    @GetMapping("/auth/hello")
+    public String hello() {
+        return "Hello, World!";
+    }
+
     @PostMapping("/auth/register")
     public ResponseEntity registerUser(@RequestBody @Valid UserValidation userValidation) {
 
@@ -56,9 +61,6 @@ public class AuthController {
         }
 
         User authenticatedUser = userService.loginUser(userLoginValidation);
-
-
-
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 

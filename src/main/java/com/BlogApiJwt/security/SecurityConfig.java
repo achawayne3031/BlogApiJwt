@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 .requestMatchers("/user").hasRole("USER")
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers( "/auth/register", "/auth/login", "/auth/forgot-password", "/access-denied").permitAll()
+                                .requestMatchers( "/auth/register", "/auth/hello", "/auth/login", "/auth/forgot-password", "/access-denied").permitAll()
                                 .anyRequest().authenticated()
                 ).authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))

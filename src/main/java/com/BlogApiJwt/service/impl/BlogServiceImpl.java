@@ -112,6 +112,7 @@ public class BlogServiceImpl implements BlogService {
                 String fileName = StringUtils.cleanPath(file.getOriginalFilename());
                 blog.setImageType(file.getContentType());
                 blog.setImage(file.getBytes());
+                
             }catch (IOException e){
                 throw new CustomException(e.getMessage());
             }

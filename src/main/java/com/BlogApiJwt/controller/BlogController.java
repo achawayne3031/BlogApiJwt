@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/blog")
+@RequestMapping("/api/user/blog")
 public class BlogController {
 
     private BlogService blogService;
